@@ -1,0 +1,104 @@
+﻿@model IEnumerable<ArticleApp.Models.Article>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+@if (Model.Count() > 0)
+{
+    <div class="row">
+        <div class="col-md-6">
+            @foreach (var item in Model)
+            {
+                <div class="articleOutput">
+                    <h3>@item.Title</h3>
+                    <div class="row">
+                        <div class="col-md-7">
+                            @if (item.Image != null)
+                            {
+                                <img src="data: image / jpeg; base64,@(Convert.ToBase64String(item.Image))" class="imgSize" />
+                            }
+                            else
+                            { <img src="~/images/default.png" asp-append-version="true" class="imgSize" />}
+                        </div>
+                        <div class="col-md-5 mr-auto">
+                            <span><i>@item.SubText</i>...<a asp-action="Details" asp-route-id="@item.Id">(See more)</a></span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-6">
+            <form asp-action="Index" method="get">
+                <div class="form-group w-50">
+                    <label>Find by name:</label>
+                    <input class="form-control" type="text" name="SearchString" value="@ViewData["currentFilter"]" />
+                </div>
+                <div class="form-group w-50">
+                    <label>Sort Order:</label>
+                    <select class="form-control" asp-items="ViewBag.Orders" name="SortOrder"></select>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Search" class="btn btn-default" />
+                </div>   
+            </form>
+        </div>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SubText)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Text)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.dateAdded)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SubText)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Text)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.dateAdded)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" data-ajax="true" data-ajax-success="deleteItem(this)">
+                            <button type="submit" class="btn btn-sm btn-danger d-none d-md-inline-block">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} else { <h3>Empty</h3> }
+
